@@ -65,12 +65,20 @@ async function Knockdown() {
 
         /* Roll trip for regular Knockdown */
         if (!hasImproved) {
-            const multipleAttackPenalty = parseInt(strike.variants[choice[1]].label.slice(4));
+            const mapSplit = strike.variants[choice[1]].label.split(' ');
+            let mapMod;
+            if (choice[1] != 0) {
+                mapMod = (mapSplit.find(a => a[0] == '+' || a[0] == '-'))
+                mapMod = mapMod.replace('+', '')
+                mapMod = mapMod - strike.totalModifier
+            }
+            else {mapMod = 0;}
+            console.log(mapMod)
             game.pf2e.actions.trip({
                 actors: [token.actor], modifiers: [
                     new game.pf2e.Modifier({
                         label: 'PF2E.MultipleAttackPenalty',
-                        modifier: multipleAttackPenalty,
+                        modifier: mapMod,
                     }),
                 ],
             })
