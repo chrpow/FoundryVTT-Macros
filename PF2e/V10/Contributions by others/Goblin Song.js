@@ -58,7 +58,7 @@ async function GoblinSong() {
         return ui.notifications.warn(`Your Goblin Song can\'t have more than ${maxTargets} targets.`);
     }
 
-    const traits = ['concentrate', 'auditory', 'linguistic'];
+    const traits = ['concentrate', 'auditory', 'goblin', 'linguistic'];
     const options = [...actor.getRollOptions(['all', 'skill-check', 'perform', 'action:' + actionSlug]), ...traits];
 
     const traitObjects = traits.map(trait => ({ description: CONFIG.PF2E.traitsDescriptions[trait], name: trait, label: CONFIG.PF2E.actionTraits[trait] }));
@@ -82,8 +82,8 @@ async function GoblinSong() {
             ui.notifications.warn(`${nameForNotifications} is out of range.`);
             continue;
         } else {
-            let virtuosic = new game.pf2e.Modifier(token.actor.skills[skillKey].modifiers.find(a => a.slug === 'virtuosic-performer-singing'));
-            modifiers.push(virtuosic)
+            // let virtuosic = new game.pf2e.Modifier(token.actor.skills[skillKey].modifiers.find(a => a.slug === 'virtuosic-performer-singing'));
+            // modifiers.push(virtuosic)
             // if (virtuosic) {
             //     modifiers.push(virtuosic);
             // }
@@ -143,11 +143,10 @@ async function GoblinSong() {
 
             // ---------------------------------------------------------
 
-            const modifiers2 = [];
             game.pf2e.Check.roll(
                 new game.pf2e.CheckModifier(
                     `<span class="pf2-icon">A</span> <b>${actionName}</b> - <p class="compact-text">${skillName} Skill Check</p>`,
-                    token.actor.skills.performance, modifiers2), context, event,
+                    token.actor.skills.performance, modifiers), context, event,
                 async (roll) => {
                     if (roll.degreeOfSuccess === 3) {
                         // crit success message
