@@ -87,11 +87,11 @@ async function Spellsling()
       // Check for spell variants
       if(spc.spell.hasVariants && spc.isAttack){
         let spell_variants;
-        if (spc.spell.overlays.contents[0].system.time !== undefined){
+        if (spc.spell.overlays.contents[0].system?.time !== undefined){
           spell_variants = Array.from(spc.spell.overlays).map(ovr => ({name: spc.name + ovr.system.time.value, id: ovr._id, lvl:spc.lvl}));
         }
         else { 
-          spell_variants = Array.from(spc.spell.overlays).map(ovr => ({name: ovr.name, id: ovr._id, lvl:spc.lvl}));
+          spell_variants = Array.from(spc.spell.overlays).map(ovr => ({name: ovr.name ?? spc.name, id: ovr._id, lvl:spc.lvl}));
         }
           spell_variants.sort((a, b) => {
             if (a.lvl === b.lvl)
@@ -181,18 +181,31 @@ async function Spellsling()
           splash = `4`
         }     
         flavor += `[[/r ${splash}[splash,acid]]] splash`
-        if (critt === 3){
+        if (critt === 3) {
           flavor += `<br>[[/r ${pers}[persistent,acid]]]`
-        }
       }
-      if(spc.slug === 'produce-flame' && critt === 3) {
-        pers = Math.ceil(actor.level / 2) + "d4";
-        flavor += `[[/r ${pers}[persistent,fire]]]`
-      }
-      if(spc.slug === 'gouging-claw' && critt === 3) {
-        pers = Math.ceil(actor.level / 2) + "d4";
-        flavor += `[[/r ${pers}[persistent,bleed]]]`
-      }
+  }
+  if (spc.slug === 'ignition' && critt === 3) {
+    pers = Math.ceil(actor.level / 2);
+    if (spc.spell.name.includes('Melee')) {
+      pers += 'd6';
+    }
+    else {
+      pers += 'd4';
+    }
+    flavor += `[[/r ${pers}[persistent,fire]]]`
+  }
+  if (spc.slug === 'produce-flame' && critt === 3) {
+      pers = Math.ceil(actor.level / 2) + "d4";
+      flavor += `[[/r ${pers}[persistent,fire]]]`
+  }
+  if (spc.slug === 'ray-of-frost' && critt === 3) {
+      flavor += `@UUID[Compendium.pf2e.spell-effects.I4PsUAaYSUJ8pwKC]{Spell Effect: Ray of Frost}`
+  }
+  if (spc.slug === 'gouging-claw' && critt === 3) {
+      pers = Math.ceil(actor.level / 2) + "d4";
+      flavor += `[[/r ${pers}[persistent,bleed]]]`
+  }  
       if(spc.slug === 'searing-light' || spc.slug === 'moonlight-ray'){
         if (game.user.targets.first().actor.traits.has('undead') || game.user.targets.first().actor.traits.has('fiend')) {
           spc.roll = new DamageRoll(`{(${spc.roll.terms[0].rolls[0]._formula})[${spc.roll.terms[0].rolls[0].type}],(${(spc.lvl-3)*2 + 5}d6)[good]}`);
